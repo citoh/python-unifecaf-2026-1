@@ -10,3 +10,8 @@ else:
     print("Inconsistência detectada")
 
 # seu código aqui abaixo:
+
+if (acesso_premium and assinatura_ativa) or (not acesso_premium and not assinatura_ativa):
+    print("Acesso correto")
+else:
+    print("Inconsistência detectada")
