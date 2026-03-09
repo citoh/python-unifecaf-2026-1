@@ -1,7 +1,3 @@
-# Create the README.md file using pypandoc as required for markdown generation
-import pypandoc
-
-content = """
 ## Comandos Git
 
 ### Fazer clone do projeto
@@ -122,6 +118,9 @@ git checkout resolucao
 git merge upstream/resolucao
 git push origin resolucao
 ```
+
+---
+Ementa do Curso:  
 
 # UniFECAF | Computational Logic Using Python
 
