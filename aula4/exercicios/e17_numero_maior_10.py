@@ -1,4 +1,8 @@
 # Exercício 17
 # Leia um número e informe se é maior que 10.
 
-# escreva seu código abaixo
+n=int(input())
+if n>10:
+    print("Maior que 10")
+else:
+    print("10 ou menor")

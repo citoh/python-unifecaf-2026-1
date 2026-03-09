@@ -1,4 +1,9 @@
 # Exercício 19
 # Leia duas palavras e informe se são iguais.
 
-# escreva seu código abaixo
+a=input()
+b=input()
+if a==b:
+    print("Iguais")
+else:
+    print("Diferentes")

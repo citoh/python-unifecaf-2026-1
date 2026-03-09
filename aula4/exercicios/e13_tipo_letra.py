@@ -1,4 +1,8 @@
 # Exercício 13
 # Leia uma letra e informe se é vogal ou consoante.
 
-# escreva seu código abaixo
+l=input("Letra: ").lower()
+if l in "aeiou":
+    print("Vogal")
+else:
+    print("Consoante")

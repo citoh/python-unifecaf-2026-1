@@ -1,4 +1,10 @@
 # Exercício 16
 # Leia o preço e classifique: barato(<50), médio(<100), caro.
 
-# escreva seu código abaixo
+p=float(input())
+if p<50:
+    print("Barato")
+elif p<100:
+    print("Médio")
+else:
+    print("Caro")
