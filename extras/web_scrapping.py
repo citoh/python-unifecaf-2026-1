@@ -5,7 +5,7 @@
 
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+
 
 # CLASSES -----------------------------------------------
 class Noticia:
@@ -13,8 +13,8 @@ class Noticia:
         self.titulo = titulo
         self.link = link
 
-    def __str__(self):
-        return f"{self.titulo}\n{self.link}"
+    def __repr__(self):
+        return f"Noticia(titulo={self.titulo!r}, link={self.link!r})"
 
 
 # FUNÇÕES E VARIÁVEIS ------------------------------------
@@ -22,48 +22,35 @@ def getNoticias(busca=None):
     url = "https://www.r7.com/"
 
     headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/122.0.0.0 Safari/537.36"
-        )
+        "User-Agent": "Mozilla/5.0"
     }
 
-    try:
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()
-    except requests.RequestException as e:
-        print(f"Erro ao acessar o site: {e}")
-        return []
+    response = requests.get(url, headers=headers, timeout=10)
+    response.raise_for_status()
 
     html = BeautifulSoup(response.text, "html.parser")
     noticias = []
-    vistos = set()
 
-    for a_tag in html.find_all("a", href=True):
-        titulo = a_tag.get_text(strip=True)
-        link = urljoin(url, a_tag["href"])
+    artigos = html.select('article[data-tb-region-item="true"]')
 
-        if not titulo:
-            continue
+    for artigo in artigos:
+        a_tag = artigo.select_one('h3[data-tb-title="true"] a')
 
-        if busca is None or busca.lower() in titulo.lower():
-            chave = (titulo, link)
-            if chave not in vistos:
-                vistos.add(chave)
-                noticias.append(Noticia(titulo, link))
+        if a_tag and a_tag.has_attr("href"):
+            titulo = a_tag.get_text(strip=True)
+            link = a_tag["href"].strip()
+
+            if titulo:
+                if busca is None or busca.lower() in titulo.lower():
+                    noticias.append(Noticia(titulo, link))
 
     return noticias
 
 
-# PROGRAMA PRINCIPAL ------------------------------------
-noticias = getNoticias("brasil")
-
+#noticias = getNoticias("brasil") #é possível buscar por uma palavra ou termo
+noticias = getNoticias()
 print("Títulos encontrados:\n")
 
-if noticias:
-    for i, noticia in enumerate(noticias, 1):
-        print(f"{i:02d}. {noticia.titulo}")
-        print(f"{noticia.link}\n")
-else:
-    print("Nenhuma notícia encontrada.")
+for i, noticia in enumerate(noticias, 1):
+    print(f"{i:02d}. {noticia.titulo}")
+    print(f"{noticia.link}\n")
