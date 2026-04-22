@@ -1,3 +1,5 @@
+# Desenvolva um CRUD de uma loja de roupas
+
 import sqlite3
 
 SCRIPT_DIR = __file__.rsplit("/", 1)[0] if "/" in __file__ else "."
