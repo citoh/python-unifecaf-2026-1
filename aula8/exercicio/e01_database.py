@@ -1,8 +1,9 @@
 # Desenvolva um CRUD de uma loja de roupas
 
 import sqlite3
+import os
 
-SCRIPT_DIR = __file__.rsplit("/", 1)[0] if "/" in __file__ else "."
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = SCRIPT_DIR + "/db_roupas.db"
 
 
@@ -17,7 +18,7 @@ def criar_tabela(conexao):
     cursor.execute(
         "CREATE TABLE IF NOT EXISTS roupas ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-        "descrica TEXT NOT NULL, "
+        "descricao TEXT NOT NULL, "
         "marca TEXT NOT NULL)"
     )
     conexao.commit()
