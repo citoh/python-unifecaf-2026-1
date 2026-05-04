@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Frontend - CRUD Usuários (Flask/FastAPI)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { --bg:#0f172a; --card:#111827; --muted:#94a3b8; --text:#e5e7eb; --accent:#10b981; --danger:#ef4444; }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      background:linear-gradient(180deg, #0b1220, #0f172a); color:var(--text);
+      min-height:100vh; padding:24px;
+    }
+    .container{ max-width:1000px; margin:0 auto; display:grid; gap:16px; }
+    header{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    h1{ margin:0; font-size:clamp(20px, 2.8vw, 28px); }
+    .card{
+      background:rgba(17,24,39,.75);
+      backdrop-filter: blur(6px);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:16px; padding:16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.35);
+    }
+    label{ display:block; font-size:12px; color:var(--muted); margin-bottom:6px; }
+    input{
+      width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.1);
+      background:#0b1220; color:var(--text); outline:none;
+    }
+    input:focus{ border-color: rgba(16,185,129,.7); box-shadow: 0 0 0 3px rgba(16,185,129,.15); }
+    .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .row-3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+    button{
+      border:0; border-radius:10px; padding:10px 14px; color:#081018; background:var(--accent); font-weight:600; cursor:pointer;
+    }
+    button.secondary{ background:#2563eb; color:white; }
+    button.warn{ background:var(--danger); color:white; }
+    button.ghost{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.15); }
+    .stack{ display:flex; gap:8px; flex-wrap:wrap; }
+    .msg{ font-size:14px; color:var(--muted); }
+    .ok{ color:#34d399; }
+    .err{ color:#fca5a5; }
+    .grid{ display:grid; grid-template-columns: 1.2fr .8fr; gap:16px; }
+    @media (max-width: 860px) { .grid, .row, .row-3{ grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>CRUD Usuários (Frontend) — Flask / FastAPI</h1>
+      <div class="stack">
+        <label style="margin:0">
+          <span style="display:block; font-size:12px; color:var(--muted); margin-bottom:6px;">Base URL da API</span>
+          <input id="baseUrl" value="http://127.0.0.1:3344" />
+        </label>
+        <button class="ghost" onclick="ping()">Testar conexão</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Lado esquerdo: Ações -->
+      <div class="stack" style="flex-direction:column; gap:16px">
+        <!-- Listar -->
+        <div class="card">
+          <h3 style="margin-top:0">Listar usuários</h3>
+          <div class="stack">
+            <button onclick="listUsers()">GET /users</button>
+            <span id="listMsg" class="msg"></span>
+          </div>
+        </div>
+
+        <!-- Buscar por ID -->
+        <div class="card">
+          <h3 style="margin-top:0">Buscar usuário por ID</h3>
+          <div class="row">
+            <label>
+              ID
+              <input id="getId" type="text" placeholder="Ex.: 1" onkeypress="if(event.key==='Enter'){getUser()}"/>
+            </label>
+            <div class="stack" style="align-items:flex-end">
+              <button class="secondary" onclick="getUser()">GET /users/{id}</button>
+            </div>
+          </div>
+          <div id="getMsg" class="msg"></div>
+        </div>
+
+        <!-- Criar -->
+        <div class="card">
+          <h3 style="margin-top:0">Criar usuário</h3>
+          <div class="row">
+            <label>
+              ID
+              <input id="createId" type="text" placeholder="Ex.: 3" onkeypress="if(event.key==='Enter'){createUser()}"/>
+            </label>
+            <label>
+              Nome
+              <input id="createName" type="text" placeholder="Ex.: Ana" onkeypress="if(event.key==='Enter'){createUser()}"/>
+            </label>
+          </div>
+          <div class="stack" style="margin-top:8px">
+            <button onclick="createUser()">POST /users</button>
+            <span id="createMsg" class="msg"></span>
+          </div>
+        </div>
+
+        <!-- Atualizar -->
+        <div class="card">
+          <h3 style="margin-top:0">Atualizar usuário</h3>
+          <div class="row">
+            <label>
+              ID (alvo)
+              <input id="updateId" type="text" placeholder="Ex.: 2" onkeypress="if(event.key==='Enter'){updateUser()}"/>
+            </label>
+            <label>
+              Nome (novo)
+              <input id="updateName" type="text" placeholder="Ex.: João Silva" onkeypress="if(event.key==='Enter'){updateUser()}"/>
+            </label>
+          </div>
+          <div class="stack" style="margin-top:8px">
+            <button class="secondary" onclick="updateUser()">PUT /users/{id}</button>
+            <span id="updateMsg" class="msg"></span>
+          </div>
+        </div>
+
+        <!-- Remover -->
+        <div class="card">
+          <h3 style="margin-top:0">Remover usuário</h3>
+          <div class="row">
+            <label>
+              ID
+              <input id="deleteId" type="text" placeholder="Ex.: 1" onkeypress="if(event.key==='Enter'){deleteUser()}"/>
+            </label>
+          </div>
+          <div class="stack" style="margin-top:8px">
+            <button class="warn" onclick="deleteUser()">DELETE /users/{id}</button>
+            <span id="deleteMsg" class="msg"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lado direito: Tabela / Saída -->
+      <div class="card">
+        <h3 style="margin-top:0">Resultado</h3>
+        <div class="stack" style="margin-bottom:8px">
+          <button class="ghost" onclick="clearOutput(true)">Limpar</button>
+        </div>
+        <div id="output" class="msg">Use os botões ao lado para fazer requisições…</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const jsonPretty = (obj) => `<pre style="white-space:pre-wrap; margin:0">${escapeHtml(JSON.stringify(obj, null, 2))}</pre>`;
+    const escapeHtml = (s) => String(s)
+      .replaceAll("&", "&amp;").replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+
+    const MSG_IDS = ["listMsg","getMsg","createMsg","updateMsg","deleteMsg"];
+
+    function base() {
+      let u = $("baseUrl").value.trim();
+      if (u.endsWith("/")) u = u.slice(0, -1);
+      return u;
+    }
+
+    function resetUI(activeMsgId){
+      for(const id of MSG_IDS){
+        const el = $(id);
+        if(!el) continue;
+        if(id === activeMsgId){
+          el.className = "msg";
+          el.textContent = "";
+        } else {
+          el.className = "msg";
+          el.textContent = "";
+        }
+      }
+      $("output").innerHTML = "";
+    }
+
+    async function api(path, opts = {}) {
+      const url = `${base()}${path}`;
+      const res = await fetch(url, {
+        headers: { "Content-Type": "application/json; charset=utf-8", ...(opts.headers || {}) },
+        ...opts
+      });
+      const text = await res.text();
+      let data = null;
+      try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+      return { ok: res.ok, status: res.status, data };
+    }
+
+    function showOut(title, payload, ok=true) {
+      const out = $("output");
+      const klass = ok ? "ok" : "err";
+      out.innerHTML = `<div class="${klass}" style="margin-bottom:8px">${escapeHtml(title)}</div>${jsonPretty(payload ?? {})}`;
+    }
+
+    function setMsg(id, msg, ok=true) {
+      const el = $(id);
+      el.className = `msg ${ok ? "ok" : "err"}`;
+      el.textContent = msg || "";
+    }
+
+    function clearOutput(manual=false){
+      $("output").innerHTML = manual ? "Saída limpa." : "";
+    }
+
+    async function ping() {
+      resetUI("listMsg");
+      try {
+        const r = await api("/users");
+        setMsg("listMsg", r.ok ? "Conectado! ✅" : `Falhou (${r.status})`, r.ok);
+        showOut("GET /users (ping)", r, r.ok);
+      } catch (e) {
+        setMsg("listMsg", "Erro de conexão", false);
+        showOut("Erro", { message: String(e) }, false);
+      }
+    }
+
+    async function listUsers() {
+      resetUI("listMsg");
+      const r = await api("/users");
+      setMsg("listMsg", r.ok ? "OK" : `Erro ${r.status}`, r.ok);
+      showOut("GET /users", r, r.ok);
+    }
+
+    async function getUser() {
+      resetUI("getMsg");
+      const id = $("getId").value;
+      if (!id) return setMsg("getMsg", "Informe um ID válido.", false);
+      const r = await api(`/users/${id}`);
+      setMsg("getMsg", r.ok ? "OK" : `Erro ${r.status}`, r.ok);
+      showOut(`GET /users/${id}`, r, r.ok);
+    }
+
+    async function createUser() {
+      resetUI("createMsg");
+      const id = Number($("createId").value);
+      const name = $("createName").value.trim();
+      if (!id || !name) return setMsg("createMsg", "Preencha ID e Nome.", false);
+      const r = await api("/users", {
+        method: "POST",
+        body: JSON.stringify({ id, name })
+      });
+      setMsg("createMsg", r.ok ? "Criado!" : `Erro ${r.status}`, r.ok);
+      showOut("POST /users", r, r.ok);
+    }
+
+    async function updateUser() {
+      resetUI("updateMsg");
+      const id = Number($("updateId").value);
+      const name = $("updateName").value.trim();
+      if (!id || !name) return setMsg("updateMsg", "Preencha ID (alvo) e Nome.", false);
+      const r = await api(`/users/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({ id, name })
+      });
+      setMsg("updateMsg", r.ok ? "Atualizado!" : `Erro ${r.status}`, r.ok);
+      showOut(`PUT /users/${id}`, r, r.ok);
+    }
+
+    async function deleteUser() {
+      resetUI("deleteMsg");
+      const id = Number($("deleteId").value);
+      if (!id) return setMsg("deleteMsg", "Informe um ID válido.", false);
+      const r = await api(`/users/${id}`, { method: "DELETE" });
+      setMsg("deleteMsg", r.ok ? "Removido!" : `Erro ${r.status}`, r.ok);
+      showOut(`DELETE /users/${id}`, r, r.ok);
+    }
+  </script>
+</body>
+</html>
