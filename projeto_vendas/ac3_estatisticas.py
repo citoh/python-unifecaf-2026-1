@@ -53,15 +53,40 @@ def top_3_vendedores_faturamento():
     return
 
 
-def listar_exercicios():
-    print("\n=== AC3 - ESTATISTICAS (EXERCICIOS) ===")
-    print("1. Total de vendas por periodo")
-    print("2. Quantidade de vendas por vendedor")
-    print("3. Ticket medio geral")
-    print("4. Ticket medio por vendedor")
-    print("5. Produto mais vendido por quantidade")
-    print("6. Produto mais rentavel por faturamento")
-    print("7. Total de descontos aplicados")
-    print("8. Percentual medio de desconto")
-    print("9. Faturamento por dia")
-    print("10. Top 3 vendedores por faturamento")
+def menu_relatorios():
+    opcoes = {
+        "1": ("Total de vendas por periodo", total_vendas_periodo),
+        "2": ("Quantidade de vendas por vendedor", qtd_vendas_por_vendedor),
+        "3": ("Ticket medio geral", ticket_medio_geral),
+        "4": ("Ticket medio por vendedor", ticket_medio_por_vendedor),
+        "5": ("Produto mais vendido por quantidade", produto_mais_vendido_qtd),
+        "6": ("Produto mais rentavel por faturamento", produto_mais_rentavel_valor),
+        "7": ("Total de descontos aplicados", total_descontos_aplicados),
+        "8": ("Percentual medio de desconto", percentual_desconto_medio),
+        "9": ("Faturamento por dia", faturamento_por_dia),
+        "10": ("Top 3 vendedores por faturamento", top_3_vendedores_faturamento),
+    }
+
+    while True:
+        print("\n=== MENU AC3 - RELATORIOS ===")
+        for codigo, (descricao, _) in opcoes.items():
+            print(f"{codigo} - {descricao}")
+        print("0 - Voltar")
+
+        escolha = input("Escolha uma opcao: ").strip()
+
+        if escolha == "0":
+            print("Voltando ao menu principal.")
+            break
+
+        if escolha in opcoes:
+            descricao, funcao = opcoes[escolha]
+            print(f"\nGerando relatorio: {descricao}")
+            resultado = funcao()
+
+            if resultado is None:
+                print("Relatorio em estrutura base (return vazio).")
+            else:
+                print(resultado)
+        else:
+            print("Opcao invalida. Tente novamente.")

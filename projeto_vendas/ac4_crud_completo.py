@@ -70,13 +70,6 @@ def excluir_venda():
     return
 
 
-def listar_exercicios():
-    print("\n=== AC4 - CRUD COMPLETO (EXERCICIOS) ===")
-    print("Produtos: criar, listar, atualizar, excluir")
-    print("Vendedores: criar, listar, atualizar, excluir")
-    print("Vendas: criar, listar, atualizar, excluir")
-
-
 def menu():
     opcoes = {
         "1": ("Criar produto", criar_produto),
