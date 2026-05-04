@@ -3,6 +3,10 @@
 # source venv/bin/activate
 # pip install opencv-python
 
+# RODANDO O PROJETO
+# python3 ./extras/image_processing/face_detection.py [diretorio_da_imagem]
+
+
 # cv2 se refere a opencv-python - utilizado para processar imagens
 import cv2 
 

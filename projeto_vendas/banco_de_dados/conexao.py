@@ -1,8 +1,3 @@
-# INSTALANDO A APLICAÇÃO:
-# python3 -m venv venv
-# source venv/bin/activate
-# pip install mysql-connector-python
-
 import mysql.connector
 from mysql.connector import Error
 
