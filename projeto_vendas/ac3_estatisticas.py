@@ -1,7 +1,7 @@
 # Avaliação Continuada 3 - 1 ponto
 # PROJETO DE VENDAS - parte 1
 # Exercicios de estatisticas de vendas.
-# Entrega - dia 16/05/2026
+# Entrega - dia 17/05/2026
 
 def total_vendas_periodo():
     # Exercicio 1: calcular o valor total vendido em um periodo usando vendas.valor_final.

@@ -1,7 +1,7 @@
 # Avaliação Continuada 4 - 1 ponto
 # PROJETO DE VENDAS - parte 2
 # Exercicios de CRUD completo (Produtos, Vendedores e Vendas)
-# Entrega - dia 23/05/2026
+# Entrega - dia 24/05/2026
 
 
 # PRODUTOS
